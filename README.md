@@ -24,6 +24,24 @@ La base de datos Northwind ha sido extendida con las siguientes mejoras:
 - pgAdmin
 - SQL Dump
 
+``` bash
+
+PS C:\Users\database> psql -U postgres -d postgres
+Contraseña para usuario postgres:
+
+psql (17.5)
+ADVERTENCIA: El código de página de la consola (850) difiere del código
+            de página de Windows (1252).
+            Los caracteres de 8 bits pueden funcionar incorrectamente.
+            Vea la página de referencia de psql «Notes for Windows users»
+            para obtener más detalles.
+Digite «help» para obtener ayuda.
+
+postgres=# createdb northwind_curso
+postgres-# \q
+PS C:\Users\database> createdb -U postgres northwind_curso
+Contraseña:
+```
 ---
 
 ## 📁 Estructura del Repositorio
