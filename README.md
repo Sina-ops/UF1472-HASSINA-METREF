@@ -24,8 +24,29 @@ La base de datos Northwind ha sido extendida con las siguientes mejoras:
 - pgAdmin
 - SQL Dump
 
-``` bash
+  ## 📁 Estructura del Repositorio
 
+  
+  🚀 Instalación Rápida
+  
+  # 1. Clonar repositorio
+```bash
+
+PS C:\Users\database> git clone https://github.com/Sina-ops/UF1472-HASSINA-METREF
+Cloning into 'UF1472-HASSINA-METREF'...
+remote: Enumerating objects: 9, done.
+remote: Counting objects: 100% (9/9), done.
+remote: Compressing objects: 100% (6/6), done.
+remote: Total 9 (delta 1), reused 0 (delta 0), pack-reused 0 (from 0)
+Receiving objects: 100% (9/9), done.
+Resolving deltas: 100% (1/1), done.
+PS C:\Users\database> cd UF1472-HASSINA-METREF
+```
+
+# 2. Crear base de datos
+createdb northwind_curso
+
+``` bash
 PS C:\Users\database> psql -U postgres -d postgres
 Contraseña para usuario postgres:
 
@@ -44,14 +65,24 @@ Contraseña:
 ```
 ---
 
-## 📁 Estructura del Repositorio
-
-# 1. Clonar repositorio
-git clone https://github.com/tu-usuario/northwind-postgres-modificado.git
-cd northwind-postgres-modificado
-
-# 2. Crear base de datos
-createdb northwind_curso
 
 # 3. Restaurar dump completo
+
 psql -d northwind_curso -f northwind_modificado.sql
+
+```bash
+PS C:\Users\database> pg_dump -U postgres -d northwind_curso -f northwind_modificado.sql
+Contraseña:
+
+PS C:\Users\database>
+```
+
+restaurar
+
+```bash
+
+PS C:\Users\database> psql -U postgres -d northwind_curso -f northwind_modificado.sql
+Contraseña para usuario postgres:
+```
+
+🔍 Funcionalidades Principales
