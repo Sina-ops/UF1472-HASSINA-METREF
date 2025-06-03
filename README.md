@@ -81,8 +81,23 @@ restaurar
 
 ```bash
 
+
 PS C:\Users\database> psql -U postgres -d northwind_curso -f northwind_modificado.sql
 Contraseña para usuario postgres:
 ```
 
 🔍 Funcionalidades Principales
+
+1. Modificación de la tabla Products
+
+
+
+
+
+
+
+
+
+
+
+3. 
