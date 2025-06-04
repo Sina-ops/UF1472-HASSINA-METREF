@@ -88,7 +88,7 @@ Contraseña para usuario postgres:
 
 🔍 Funcionalidades Principales
 
-1. Modificación de la tabla Products
+1.Modificación de la tabla Products
 
 Añadir columna JSON a la tabla Products
 
@@ -133,14 +133,83 @@ SET caracteristicas_json = '{
   }
 }'
 WHERE product_id = 3;
+
+
+UPDATE Products
+SET caracteristicas_json = '{
+  "categoria": "Agricultura",
+  "subcategoria": "Fertilizantes",
+  "especificaciones": {
+    "tipo": "Orgánico",
+    "contenido_npk": "10-5-5",
+    "presentacion": "Sólido"
+  }
+}'
+WHERE product_id = 10;
+
+
+UPDATE Products
+SET caracteristicas_json = '{
+  "categoria": "Agricultura",
+  "subcategoria": "Maquinaria",
+  "especificaciones": {
+    "potencia_hp": "150",
+    "tipo": "Tractor de ruedas",
+    "marca": "John Deere"
+  }
+}'
+WHERE product_id = 11;
+
+
+UPDATE Products
+SET caracteristicas_json = '{
+  "categoria": "Agricultura",
+  "subcategoria": "Riego",
+  "especificaciones": {
+    "tipo": "Goteo",
+    "longitud": "500m",
+    "presion_agua": "1.5 bar"
+  }
+}'
+WHERE product_id = 12;
+
+
+UPDATE Products
+SET caracteristicas_json = '{
+  "categoria": "Agricultura",
+  "subcategoria": "Semillas",
+  "especificaciones": {
+    "variedad": "Híbrido 321",
+    "rendimiento_estimado": "10t/ha",
+    "resistencia": "Alta a sequía"
+  }
+}'
+WHERE product_id = 13;
+
+
+UPDATE Products
+SET caracteristicas_json = '{
+  "categoria": "Agricultura",
+  "subcategoria": "Fitosanitarios",
+  "especificaciones": {
+    "tipo": "Biológico",
+    "ingrediente_activo": "Bacillus thuringiensis",
+    "aplicacion": "Fumigación foliar"
+  }
+}'
+WHERE product_id = 14;
 ```
-Ejecutar consultas sobre los datos JSON Obtener productos de una categoría específica. 
+
+
+Ejecutar consultas sobre los datos JSON Obtener productos de una categoría específica:
+
 ``` SQL
 SELECT product_id, Product_Name, caracteristicas_json
 FROM Products
 WHERE caracteristicas_json ->> 'categoria' = 'Agricultura';
 ```
-Filtrar productos según una subcategoría dentro del JSON
+
+Filtrar productos según una subcategoría dentro del JSON:
 
 ``` SQL
 select product_id, product_Name, caracteristicas_json
@@ -148,7 +217,7 @@ from Products
 where caracteristicas_json ->> 'subcategoria'='Maquinaria';
 ```
 
-
+2. 
 
 
 
