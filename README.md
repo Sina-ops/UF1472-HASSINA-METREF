@@ -90,6 +90,50 @@ Contraseña para usuario postgres:
 
 1. Modificación de la tabla Products
 
+Añadir columna JSON a la tabla Products
+
+``` SQL
+ALTER TABLE Products
+ADD COLUMN caracteristicas_json JSONB;
+```
+
+Actualizar registros con ejemplos de datos JSON, Aquí añadimos valores para las columnas caracteristicas_json con atributos como "categoria" y "subcategoria".
+
+``` SQL
+elect * from products;
+UPDATE Products
+SET caracteristicas_json = '{
+  "categoria": "Agricultura",
+  "subcategoria": "Maquinaria",
+  "especificaciones": {
+    "potencia": "2000",
+    "zona": "Seca"
+  }
+}'
+WHERE product_id = 1;
+
+UPDATE Products
+SET caracteristicas_json = '{
+  "categoria": "Agricultura",
+  "subcategoria": "phytoproducto",
+  "especificaciones": {
+    "NPK": "Cargado",
+    "PH": "basico"
+  }
+}'
+WHERE product_id = 2;
+
+UPDATE Products
+SET caracteristicas_json = '{
+  "categoria": "Agricultura",
+  "subcategoria": "zoologia",
+  "especificaciones": {
+    "material": "vacuna",
+    "tipo": "obligatorio"
+  }
+}'
+WHERE product_id = 3;
+```
 
 
 
