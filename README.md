@@ -63,7 +63,18 @@ postgres-# \q
 PS C:\Users\database> createdb -U postgres northwind_curso
 Contraseña:
 ```
----
+``` bash
+
+C:\Users\database>pg_dump -U postgres -d northwind -F c -f northwind.backup
+Contraseña:
+
+```
+``` bash
+
+C:\Users\database>pg_dump -U postgres -d northwind --inserts -f northwind_inserts.sql
+Contraseña:
+
+```
 
 
 # 3. Restaurar dump completo
@@ -71,11 +82,9 @@ Contraseña:
 psql -d northwind_curso -f northwind_modificado.sql
 
 ```bash
-PS C:\Users\database> pg_dump -U postgres -d northwind_curso -f northwind_modificado.sql
-Contraseña:
-
-PS C:\Users\database>
+C:\Users\database>psql -U postgres -d northwind_modificado -f northwind_inserts.sql
 ```
+
 
 restaurar
 
@@ -219,13 +228,146 @@ from Products
 where caracteristicas_json ->> 'subcategoria'='Maquinaria';
 ```
 
-2. 
+2. Propuesta Practica
+
+La idea es añadir una columna JSON a la tabla Products para guardar información como tipo de uso, características técnicas o clasificaciones. Así se pueden hacer búsquedas más detalladas sin depender solo de las columnas fijas.
+Por ejemplo, podré buscar productos agrícolas que sean “orgánicos” o equipos ambientales con cierta potencia, directamente dentro del campo JSON.
+Tendremos como ebjetivo:
+Poder filtrar productos según detalles específicos (como subcategoría, potencia, resistencia al clima, etc.) sin modificar el diseño original de la base de datos.
+
+Ejemplo 01: Buscar productos agrícolas que sean orgánicos
+```SQL
+SELECT product_id, product_name, caracteristicas_json
+FROM Products
+WHERE caracteristicas_json -> 'especificaciones' ->> 'tipo' = 'Orgánico';
+```
+
+Ejemplo 02 r productos ambientales con potencia mayor a 100
+``` SQL
+SELECT product_id, product_Name, caracteristicas_json
+FROM Products
+WHERE (caracteristicas_json -> 'especificaciones' ->> 'potencia')::int > 100;
+```
+
+
+📊 Nuevas Tablas Añadidas
 
 
 
 
+subcategories - Categorías jerárquicas
+
+``` SQL
+CREATE TABLE subcategories (
+    subcategory_id SERIAL PRIMARY KEY,
+    category_id INTEGER REFERENCES categories(category_id),
+    subcategory_name VARCHAR(100) NOT NULL,
+    description TEXT
+);
+---Ejemplo de insercion
+INSERT INTO subcategories (category_id, subcategory_name, description)
+VALUES
+(3, 'Frutas Orgánicas', 'Frutas cultivadas sin pesticidas ni químicos'),
+(3, 'Verduras de Hoja', 'Lechugas, espinacas y otras verduras frescas'),
+(3, 'Cereales Integrales', 'Arroz, avena y trigo sin procesar'),
+(3, 'Legumbres', 'Lentejas, garbanzos y porotos'),
+(3, 'Tubérculos', 'Papa, yuca y otros cultivos subterráneos');
+```
+
+volume_discounts - Descuentos por cantidad
+
+``` SQL
+CREATE TABLE discounts (
+    discount_id SERIAL PRIMARY KEY,
+    product_id INTEGER REFERENCES products(product_id),
+    min_quantity INTEGER NOT NULL,
+    discount_percent NUMERIC(5,2) NOT NULL CHECK (discount_percent BETWEEN 0 AND 100)
+);
+
+-- Ejemplo de inserción
+INSERT INTO discounts (product_id, min_quantity, discount_percent)
+VALUES
+(1, 50, 10.00),
+(2, 100, 15.00);
+```
+
+product_audit - Auditoría de cambios
+``` SQL
+CREATE TABLE product_audit (
+    audit_id SERIAL PRIMARY KEY,
+    product_id INTEGER REFERENCES products(product_id),
+    changed_by VARCHAR(50),
+    change_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    field_changed VARCHAR(50),
+    old_value TEXT,
+    new_value TEXT
+);
+
+-- Ejemplo de inserción
+INSERT INTO product_audit (product_id, changed_by, field_changed, old_value, new_value)
+VALUES
+(1, 'admin', 'unit_price', '20.00', '18.50'),
+(2, 'maria.p', 'units_in_stock', '100', '80');
+```
+stock_alerts - Alertas de inventario
+
+``` SQL
+CREATE TABLE stock_alerts (
+    alert_id SERIAL PRIMARY KEY,
+    product_id INTEGER REFERENCES products(product_id),
+    alert_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    stock_level INTEGER,
+    alert_message TEXT
+);
+
+-- Ejemplo de inserción
+INSERT INTO stock_alerts (product_id, stock_level, alert_message)
+VALUES
+(1, 5, 'Critico: quedan menos de 15 unidades'),
+(3, 0, 'agotado');
+```
+
+Vistas
+
+``` BASH
+
+---vw_analisis_clientes - Segmentación y comportamiento de clientes
+create or replace view vw_analisis_cliente as
+select cd.customer_desc as comportamiento,
+      COUNT(c.customer_id) as cantidad_clientes
+from customers c
+join customer_customer_demo cc on c.customer_id = cc.customer_id
+join customer_demographics cd on cc.customer_type_id = cd.customer_type_id
+group  by cd.customer_desc
+order by cantidad_clientes desc;
+```
+
+-vw_ventas_mensuales - Tendencias de ventas por período
+
+```bash
+create or replace view vw_ventas_mensuales as
+select DATE_TRUNC('month', o.order_date)as fecha,
+       round(SUM(od.unit_price * od.quantity * (1 - od.discount))::numeric, 2)  as ventas
+from orders o
+join order_details od on o.order_id = od.order_id
+group by date_trunc('month', o.order_date)
+order by fecha;
+```
+
+-vw_performance_proveedores - Evaluación de proveedores
+
+```bach
+create or replace view vw_performance_proveedores as 
+select s.company_name as company,
+       p.product_name as product,
+       round(SUM(od.unit_price * od.quantity * ( 1 - od.discount))::numeric, 2) as ventas
+from suppliers s 
+join products p on p.supplier_id = s.supplier_id
+join order_details od on p.product_id=od.product_id
+group by company, product
+order by ventas;
+
+```
 
 
 
-
-3. 
