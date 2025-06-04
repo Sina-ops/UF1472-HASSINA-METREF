@@ -134,6 +134,19 @@ SET caracteristicas_json = '{
 }'
 WHERE product_id = 3;
 ```
+Ejecutar consultas sobre los datos JSON Obtener productos de una categoría específica. 
+``` SQL
+SELECT product_id, Product_Name, caracteristicas_json
+FROM Products
+WHERE caracteristicas_json ->> 'categoria' = 'Agricultura';
+```
+Filtrar productos según una subcategoría dentro del JSON
+
+``` SQL
+select product_id, product_Name, caracteristicas_json
+from Products
+where caracteristicas_json ->> 'subcategoria'='Maquinaria';
+```
 
 
 
