@@ -90,6 +90,8 @@ Contraseña para usuario postgres:
 
 1.Modificación de la tabla Products
 
+Voy a modificar la tabla Products para agregar una nueva columna llamada caracteristicas_json. Esta columna servirá para guardar información adicional de cada producto, como su categoría, subcategoría y detalles técnicos, usando el formato JSON.
+
 Añadir columna JSON a la tabla Products
 
 ``` SQL
