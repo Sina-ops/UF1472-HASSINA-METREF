@@ -28,9 +28,40 @@ La base de datos Northwind ha sido extendida con las siguientes mejoras:
 ##📁 Estructura del Repositorio
 ---
 
+añadir una subcarpeta
+
+``` bash
+PS C:\Users\database\UF1472-HASSINA-METREF> mkdir -p UF1472-HASSINA-METREF/northwind_modificado
+````
+``` bash
+PS C:\Users\database> cd UF1472-HASSINA-METREF
+PS C:\Users\database\UF1472-HASSINA-METREF> tree /f
+Listado de rutas de carpetas para el volumen OS
+El número de serie del volumen es 3840-5A98
+C:.
+│   README.md
+│
+└───UF1472-HASSINA-METREF
+    └───northwind_modificado
+PS C:\Users\database\UF1472-HASSINA-METREF> dir
+
+
+    Directorio: C:\Users\database\UF1472-HASSINA-METREF
+
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        05/06/2025     12:11                UF1472-HASSINA-METREF
+-a----        02/06/2025     13:57           1778 README.md
+
+
+PS C:\Users\database\UF1472-HASSINA-METREF>
+```
+
 ```BASH
  PS C:\Users\database> git clone https://github.com/Sina-ops/UF1472-HASSINA-METREF.git
 ```
+
 
   ##🚀 Instalación Rápida
   ---
