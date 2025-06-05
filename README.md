@@ -58,9 +58,9 @@ ADVERTENCIA: El código de página de la consola (850) difiere del código
             para obtener más detalles.
 Digite «help» para obtener ayuda.
 
-postgres=# createdb northwind_curso
+postgres=# createdb northwind_modificado
 postgres-# \q
-PS C:\Users\database> createdb -U postgres northwind_curso
+PS C:\Users\database> createdb -U postgres northwind_modificado
 Contraseña:
 ```
 ``` bash
@@ -91,7 +91,7 @@ restaurar
 ```bash
 
 
-PS C:\Users\database> psql -U postgres -d northwind_curso -f northwind_modificado.sql
+PS C:\Users\database> psql -U postgres -d northwind_modificado -f northwind_modificado.sql
 Contraseña para usuario postgres:
 ```
 
