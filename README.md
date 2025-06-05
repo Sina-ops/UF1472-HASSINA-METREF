@@ -26,7 +26,11 @@ La base de datos Northwind ha sido extendida con las siguientes mejoras:
 - pgAdmin
 - SQL Dump
 ##📁 Estructura del Repositorio
+---
 
+```BASH
+ PS C:\Users\database> git clone https://github.com/Sina-ops/UF1472-HASSINA-METREF.git
+```
 
   ##🚀 Instalación Rápida
   ---
