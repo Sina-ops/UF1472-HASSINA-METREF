@@ -1,1 +1,227 @@
+ALTER TABLE Products
+ADD COLUMN caracteristicas_json JSONB;
+
+select * from products;
+UPDATE Products
+SET caracteristicas_json = '{
+  "categoria": "Agricultura",
+  "subcategoria": "Maquinaria",
+  "especificaciones": {
+    "potencia": "2000",
+    "zona": "Seca"
+  }
+}'
+WHERE product_id = 1;
+
+UPDATE Products
+SET caracteristicas_json = '{
+  "categoria": "Agricultura",
+  "subcategoria": "phytoproducto",
+  "especificaciones": {
+    "NPK": "Cargado",
+    "PH": "basico"
+  }
+}'
+WHERE product_id = 2;
+
+UPDATE Products
+SET caracteristicas_json = '{
+  "categoria": "Agricultura",
+  "subcategoria": "zoologia",
+  "especificaciones": {
+    "material": "vacuna",
+    "tipo": "obligatorio"
+  }
+}'
+WHERE product_id = 3;
+
+
+UPDATE Products
+SET caracteristicas_json = '{
+  "categoria": "Agricultura",
+  "subcategoria": "Fertilizantes",
+  "especificaciones": {
+    "tipo": "Orgánico",
+    "contenido_npk": "10-5-5",
+    "presentacion": "Sólido"
+  }
+}'
+WHERE product_id = 10;
+
+
+UPDATE Products
+SET caracteristicas_json = '{
+  "categoria": "Agricultura",
+  "subcategoria": "Maquinaria",
+  "especificaciones": {
+    "potencia_hp": "150",
+    "tipo": "Tractor de ruedas",
+    "marca": "John Deere"
+  }
+}'
+WHERE product_id = 11;
+
+
+UPDATE Products
+SET caracteristicas_json = '{
+  "categoria": "Agricultura",
+  "subcategoria": "Riego",
+  "especificaciones": {
+    "tipo": "Goteo",
+    "longitud": "500m",
+    "presion_agua": "1.5 bar"
+  }
+}'
+WHERE product_id = 12;
+
+
+UPDATE Products
+SET caracteristicas_json = '{
+  "categoria": "Agricultura",
+  "subcategoria": "Semillas",
+  "especificaciones": {
+    "variedad": "Híbrido 321",
+    "rendimiento_estimado": "10t/ha",
+    "resistencia": "Alta a sequía"
+  }
+}'
+WHERE product_id = 13;
+
+
+UPDATE Products
+SET caracteristicas_json = '{
+  "categoria": "Agricultura",
+  "subcategoria": "Fitosanitarios",
+  "especificaciones": {
+    "tipo": "Biológico",
+    "ingrediente_activo": "Bacillus thuringiensis",
+    "aplicacion": "Fumigación foliar"
+  }
+}'
+WHERE product_id = 14;
+
+SELECT product_id, Product_Name, caracteristicas_json
+FROM Products
+WHERE caracteristicas_json ->> 'categoria' = 'Agricultura';
+
+
+---Ejemplo 01: Buscar productos agrícolas que sean orgánicos
+SELECT product_id, product_name, caracteristicas_json
+FROM Products
+WHERE caracteristicas_json -> 'especificaciones' ->> 'tipo' = 'Orgánico';
+
+---Ejemplo 02 r productos ambientales con potencia mayor a 100
+SELECT product_id, product_Name, caracteristicas_json
+FROM Products
+WHERE (caracteristicas_json -> 'especificaciones' ->> 'potencia')::int > 100;
+
+---subcategories - Categorías jerárquicas
+CREATE TABLE subcategories (
+    subcategory_id SERIAL PRIMARY KEY,
+    category_id INTEGER REFERENCES categories(category_id),
+    subcategory_name VARCHAR(100) NOT NULL,
+    description TEXT
+);
+
+---Ejemplo de insercion
+INSERT INTO subcategories (category_id, subcategory_name, description)
+VALUES
+(3, 'Frutas Orgánicas', 'Frutas cultivadas sin pesticidas ni químicos'),
+(3, 'Verduras de Hoja', 'Lechugas, espinacas y otras verduras frescas'),
+(3, 'Cereales Integrales', 'Arroz, avena y trigo sin procesar'),
+(3, 'Legumbres', 'Lentejas, garbanzos y porotos'),
+(3, 'Tubérculos', 'Papa, yuca y otros cultivos subterráneos');
+
+---volume_discounts - Descuentos por cantidad
+CREATE TABLE discounts (
+    discount_id SERIAL PRIMARY KEY,
+    product_id INTEGER REFERENCES products(product_id),
+    min_quantity INTEGER NOT NULL,
+    discount_percent NUMERIC(5,2) NOT NULL CHECK (discount_percent BETWEEN 0 AND 100)
+);
+
+-- Ejemplo de inserción
+INSERT INTO discounts (product_id, min_quantity, discount_percent)
+VALUES
+(1, 50, 10.00),
+(2, 100, 15.00);
+
+---product_audit - Auditoría de cambios
+CREATE TABLE product_audit (
+    audit_id SERIAL PRIMARY KEY,
+    product_id INTEGER REFERENCES products(product_id),
+    changed_by VARCHAR(50),
+    change_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    field_changed VARCHAR(50),
+    old_value TEXT,
+    new_value TEXT
+);
+
+---Ejemplo de inserción
+INSERT INTO product_audit (product_id, changed_by, field_changed, old_value, new_value)
+VALUES
+(1, 'admin', 'unit_price', '20.00', '18.50'),
+(2, 'maria.p', 'units_in_stock', '100', '80');
+
+---stock_alerts - Alertas de inventario
+CREATE TABLE stock_alerts (
+    alert_id SERIAL PRIMARY KEY,
+    product_id INTEGER REFERENCES products(product_id),
+    alert_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    stock_level INTEGER,
+    alert_message TEXT
+);
+
+-- Ejemplo de inserción
+INSERT INTO stock_alerts (product_id, stock_level, alert_message)
+VALUES
+(1, 5, 'Critico: quedan menos de 15 unidades'),
+(3, 0, 'agotado');
+
+
+---vw_analisis_clientes - Segmentación y comportamiento de clientes
+
+create or replace view vw_analisis_cliente as
+select cd.customer_desc as comportamiento,
+      COUNT(c.customer_id) as cantidad_clientes
+from customers c
+join customer_customer_demo cc on c.customer_id = cc.customer_id
+join customer_demographics cd on cc.customer_type_id = cd.customer_type_id
+group  by cd.customer_desc
+order by cantidad_clientes desc;
+
+
+
+---vw_ventas_mensuales - Tendencias de ventas por período
+create or replace view vw_ventas_mensuales as
+select DATE_TRUNC('month', o.order_date)as fecha,
+       round(SUM(od.unit_price * od.quantity * (1 - od.discount))::numeric, 2)  as ventas
+from orders o
+join order_details od on o.order_id = od.order_id
+group by date_trunc('month', o.order_date)
+order by fecha;
+
+
+---vw_performance_proveedores - Evaluación de proveedores
+create or replace view vw_performance_proveedores as 
+select s.company_name as company,
+       p.product_name as product,
+       round(SUM(od.unit_price * od.quantity * ( 1 - od.discount))::numeric, 2) as ventas
+from suppliers s 
+join products p on p.supplier_id = s.supplier_id
+join order_details od on p.product_id=od.product_id
+group by company, product
+order by ventas;
+
+
+---validacion
+
+SELECT count(*) FROM subcategories;        -- he puesto 10 ejemplos 
+SELECT count(*) FROM discounts;     -- Debe mostrar 8
+SELECT count(*) FROM stock_alerts;        -- Debe mostrar varias
+
+-- Probar vistas
+SELECT count(*) FROM vw_ventas_mensuales;
+SELECT count(*) FROM vw_performance_proveedores;
+
 
