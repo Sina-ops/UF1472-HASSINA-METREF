@@ -61,7 +61,10 @@ PS C:\Users\database\UF1472-HASSINA-METREF>
 ```BASH
  PS C:\Users\database> git clone https://github.com/Sina-ops/UF1472-HASSINA-METREF.git
 ```
-
+clonar 
+ ``` bash
+PS C:\Users\database> git clone https://github.com/Sina-ops/UF1472-HASSINA-METREF.git
+``` 
 
   ##🚀 Instalación Rápida
   ---
