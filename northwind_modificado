@@ -1,6 +1,9 @@
+---modificacion
 ALTER TABLE Products
 ADD COLUMN caracteristicas_json JSONB;
 
+---ejemplos
+ 
 select * from products;
 UPDATE Products
 SET caracteristicas_json = '{
@@ -99,6 +102,8 @@ SET caracteristicas_json = '{
   }
 }'
 WHERE product_id = 14;
+
+---probar ejemplo
 
 SELECT product_id, Product_Name, caracteristicas_json
 FROM Products
