@@ -7,6 +7,7 @@ Este repositorio contiene una versión modificada de la base de datos **Northwin
 ---
 
 ## 📋 Descripción del Proyecto
+---
 
 La base de datos Northwind ha sido extendida con las siguientes mejoras:
 
@@ -19,17 +20,19 @@ La base de datos Northwind ha sido extendida con las siguientes mejoras:
 - **Triggers Inteligentes**: Automatización de procesos.
 
 - ## 🛠️ Tecnologías
+- ---
 
 - PostgreSQL 17
 - pgAdmin
 - SQL Dump
+##📁 Estructura del Repositorio
 
-  ## 📁 Estructura del Repositorio
 
+  ##🚀 Instalación Rápida
+  ---
+
+ # 1. Clonar repositorio
   
-  🚀 Instalación Rápida
-  
-  # 1. Clonar repositorio
 ```bash
 
 PS C:\Users\database> git clone https://github.com/Sina-ops/UF1472-HASSINA-METREF
@@ -79,23 +82,15 @@ Contraseña:
 
 # 3. Restaurar dump completo
 
-psql -d northwind_curso -f northwind_modificado.sql
 
-```bash
+
+``` bash
 C:\Users\database>psql -U postgres -d northwind_modificado -f northwind_inserts.sql
 ```
 
 
-restaurar
-
-```bash
-
-
-PS C:\Users\database> psql -U postgres -d northwind_modificado -f northwind_modificado.sql
-Contraseña para usuario postgres:
-```
-
-🔍 Funcionalidades Principales
+##🔍 Funcionalidades Principales
+---
 
 1.Modificación de la tabla Products
 
@@ -250,10 +245,9 @@ WHERE (caracteristicas_json -> 'especificaciones' ->> 'potencia')::int > 100;
 ```
 
 
-📊 Nuevas Tablas Añadidas
+##📊 Nuevas Tablas Añadidas
 
-
-
+---
 
 subcategories - Categorías jerárquicas
 
@@ -292,6 +286,7 @@ VALUES
 ```
 
 product_audit - Auditoría de cambios
+
 ``` SQL
 CREATE TABLE product_audit (
     audit_id SERIAL PRIMARY KEY,
@@ -311,7 +306,7 @@ VALUES
 ```
 stock_alerts - Alertas de inventario
 
-``` SQL
+```SQL
 CREATE TABLE stock_alerts (
     alert_id SERIAL PRIMARY KEY,
     product_id INTEGER REFERENCES products(product_id),
@@ -327,11 +322,14 @@ VALUES
 (3, 0, 'agotado');
 ```
 
-Vistas
+##📈 Vistas Creadas
 
-``` BASH
+---
 
 ---vw_analisis_clientes - Segmentación y comportamiento de clientes
+
+```SQL
+
 create or replace view vw_analisis_cliente as
 select cd.customer_desc as comportamiento,
       COUNT(c.customer_id) as cantidad_clientes
@@ -344,7 +342,7 @@ order by cantidad_clientes desc;
 
 -vw_ventas_mensuales - Tendencias de ventas por período
 
-```bash
+```SQL
 create or replace view vw_ventas_mensuales as
 select DATE_TRUNC('month', o.order_date)as fecha,
        round(SUM(od.unit_price * od.quantity * (1 - od.discount))::numeric, 2)  as ventas
@@ -356,7 +354,7 @@ order by fecha;
 
 -vw_performance_proveedores - Evaluación de proveedores
 
-```bach
+```SQL
 create or replace view vw_performance_proveedores as 
 select s.company_name as company,
        p.product_name as product,
@@ -369,5 +367,17 @@ order by ventas;
 
 ```
 
+##🧪 Validar Instalación
 
+Validado
+```SQL
+
+SELECT count(*) FROM subcategories;        -- he puesto 10 ejemplos 
+SELECT count(*) FROM discounts;     -- Debe mostrar 8
+SELECT count(*) FROM stock_alerts;        -- Debe mostrar varias
+
+-- Probar vistas
+SELECT count(*) FROM vw_ventas_mensuales;
+SELECT count(*) FROM vw_performance_proveedores;
+```
 
